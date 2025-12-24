@@ -23,6 +23,8 @@ class Bot:
         self.thread = threading.Thread(target=self.run, daemon=True)
         
         self.mqqtManage = mqttManager("broker.emqx.io",f"botPresensi/{self.username}")
+        
+        
 
     def start(self):
         self.thread.start()
@@ -55,8 +57,6 @@ class Bot:
                 break
 
     def loop(self):
-        print("looping")
-
         # Always go to main page
         if self.driver.current_url != self.PAGES["main"]:
             self.driver.get(self.PAGES["main"])

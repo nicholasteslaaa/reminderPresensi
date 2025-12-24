@@ -5,13 +5,57 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
 </head>
-
 <body>
-    <form action="http://127.0.0.1:8000/addBot" method="POST">
-        <input type="text" name="id">
-        <input type="password" name="password">
-        <button type="submit">Login</button>
-    </form>
+    <select id="mySelect">
+        <option value="start">Start</option>
+        <option value="stop">Stop</option>
+    </select>
+    <br>
+
+    <input type="text" placeholder="ID" onchange="onChangingInput(this, 'id')">
+    <div  id="startForm">
+        <input type="password" placeholder="Password" onchange="onChangingInput(this, 'password')">
+        <form action="http://127.0.0.1:8000/addBot" method="POST">
+            <input type="text" name="id" hidden>
+            <input type="password" name="password" hidden>
+            <button type="submit">Start</button>
+        </form>
+    </div>
+
+    <div id="stopForm" hidden>
+        <form action="http://127.0.0.1:8000/stopBot" method="POST">
+            <input type="text" name="id" hidden>
+            <input type="password" name="password" hidden>
+            <button type="submit">Stop</button>
+        </form>
+    </div>
+    
 </body>
 
+<script>
+
+    const select = document.getElementById('mySelect');
+
+    select.addEventListener('change', function() {
+        const value = this.value;
+        startFormDiv = document.getElementById("startForm");
+        stopFormDiv = document.getElementById("stopForm");
+        
+        if (value == "start"){
+            startFormDiv.hidden = false;
+            stopFormDiv.hidden = true;
+        }
+        if (value == "stop"){
+            startFormDiv.hidden = true;
+            stopFormDiv.hidden = false;
+        }
+    });
+
+    function onChangingInput(el, uname){
+        const inputFields = document.getElementsByName(uname); // NodeList
+        for (let i = 0; i < inputFields.length; i++){
+            inputFields[i].value = el.value; // update each field
+        }
+    }
+</script>
 </html>
