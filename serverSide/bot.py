@@ -4,6 +4,7 @@ import threading
 import time
 from mqttManager import mqttManager
 import re
+import os
 
 class Bot:
     def __init__(self, username, password):
@@ -33,9 +34,10 @@ class Bot:
         self.running = False
         self.driver.quit()
 
-    def getClassId(self, text):
-        m = re.search(r"\[(.*?)\]", text)
-        return m.group(1) if m else None
+    def getSplittedClassName(self, text):
+        classId = re.search(r"\[(.*?)\]", text)
+        className = re.search(r"\]\s*(.*?)\s*\(\d+\s*SKS\)", text)
+        return {"id":classId.group(1),"name":className.group(1)}
 
     def checkLogin(self):
         self.driver.get(self.PAGES["login"])
@@ -64,20 +66,21 @@ class Bot:
         time.sleep(1)  # allow page to load
 
         # STEP 1: COLLECT URLs (NO NAVIGATION HERE)
-        urls = []
+        daftarMatkul = {}
         boxes = self.driver.find_elements(By.CLASS_NAME, "kelas_box")
-
+        
         for box in boxes:
             h2 = box.find_element(By.TAG_NAME, "h2")
-            class_id = self.getClassId(h2.text)
-            if class_id:
-                urls.append(self.PAGES["presensi"] + class_id)
-
+            matkul = self.getSplittedClassName(h2.text)
+            if matkul["id"]:
+                daftarMatkul.update({matkul["id"]:matkul["name"]})
+                
         # STEP 2: NAVIGATE USING STORED STRINGS
-        for url in urls:
-            self.driver.get(url)
-            print(self.username, "checking", url)
-            self.mqqtManage.sendMsg(f"checking: {url}")
+        for matkul in daftarMatkul:
+            self.driver.get(self.PAGES["presensi"]+matkul)
+            # second_td = self.driver.find_element(By.CSS_SELECTOR, "table tr:nth-child(2) td:nth-child(2)")
+            # print(second_td.text)
+            print(f"checking: [{matkul}]{daftarMatkul[matkul]}")
+            self.mqqtManage.sendMsg(f"checking: [{matkul}]{daftarMatkul[matkul]}")
             time.sleep(1)
-
         
