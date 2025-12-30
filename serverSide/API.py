@@ -35,6 +35,7 @@ def add_bot(id: str = Form(...), password: str = Form(...)):
 
     bot = Bot(id, password)
     if not bot.checkLogin():
+        bot.stop()
         return {"status": "Login failed"}
 
     bots[id] = bot
@@ -56,5 +57,5 @@ if __name__  == "__main__":
         "API:app",        # filename:app
         host="192.168.1.6",
         port=8000,
-        reload=True        # auto-reload (dev only)
+        reload=False        # auto-reload (dev only)
     )

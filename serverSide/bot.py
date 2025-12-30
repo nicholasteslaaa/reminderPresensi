@@ -45,8 +45,15 @@ class Bot:
         self.driver.find_element(By.NAME, "id").send_keys(self.username)
         self.driver.find_element(By.NAME, "password").send_keys(self.password)
         self.driver.find_element(By.CSS_SELECTOR, "input[type='submit']").click()
-        time.sleep(1)
-        return self.driver.current_url != self.PAGES["login"]
+        
+        result = None
+        try:
+            error = self.driver.find_element(By.CLASS_NAME,"error")
+            result = False if error.text != "Login gagal, silahkan coba kembali." else None
+        except:
+            result = True
+            
+        return result
 
     def run(self):
         print(f"Bot started: {self.username}")
@@ -81,12 +88,11 @@ class Bot:
             self.driver.get(self.PAGES["presensi"]+matkul)
             # second_td = self.driver.find_element(By.CSS_SELECTOR, "table tr:nth-child(2) td:nth-child(2)")
             # print(second_td.text)
+            
             print(f"checking: [{matkul}]{daftarMatkul[matkul]}")
             matkulSplit = daftarMatkul[matkul].split(" ")
             msg= f"{''.join([i[0] for i in matkulSplit[:-2]])} ({matkulSplit[-1]})"
             if (random.randint(0,2) == 1):
                 msg += "!"
             self.mqqtManage.sendMsg(msg)
-            
-            time.sleep(1)
         
