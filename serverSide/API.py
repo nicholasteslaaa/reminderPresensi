@@ -54,7 +54,7 @@ def stop_bot(id: str = Form(...)):
 if __name__  == "__main__":
     uvicorn.run(
         "API:app",        # filename:app
-        host="127.0.0.1",
+        host="192.168.1.6",
         port=8000,
         reload=True        # auto-reload (dev only)
     )

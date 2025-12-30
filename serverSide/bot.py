@@ -5,6 +5,7 @@ import time
 from mqttManager import mqttManager
 import re
 import os
+import random
 
 class Bot:
     def __init__(self, username, password):
@@ -81,6 +82,11 @@ class Bot:
             # second_td = self.driver.find_element(By.CSS_SELECTOR, "table tr:nth-child(2) td:nth-child(2)")
             # print(second_td.text)
             print(f"checking: [{matkul}]{daftarMatkul[matkul]}")
-            self.mqqtManage.sendMsg(f"checking: [{matkul}]{daftarMatkul[matkul]}")
+            matkulSplit = daftarMatkul[matkul].split(" ")
+            msg= f"{''.join([i[0] for i in matkulSplit[:-2]])} ({matkulSplit[-1]})"
+            if (random.randint(0,2) == 1):
+                msg += "!"
+            self.mqqtManage.sendMsg(msg)
+            
             time.sleep(1)
         
